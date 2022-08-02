@@ -32,12 +32,15 @@ namespace BugTracker.Services
         {
             BTUser currentPM = await GetProjectManagerAsync(projectId);
 
-            // Remove the current PM if necessary
-            if (currentPM != null)
+            try
             {
-                await RemoveProjectManagerAsync(projectId);
+                // Remove the current PM if necessary
+                if (currentPM != null)
+                {
+                    await RemoveProjectManagerAsync(projectId);
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error removing current PM. - Error: {ex.Message}");
                 return false;
