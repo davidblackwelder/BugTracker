@@ -44,6 +44,7 @@ namespace BugTracker
             services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<IBTTicketService, BTTicketService>();
+            services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
 
             services.AddControllersWithViews();
         }
