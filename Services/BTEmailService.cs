@@ -1,7 +1,10 @@
 ﻿using BugTracker.Models;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using System;
 using System.Threading.Tasks;
 
 namespace BugTracker.Services
@@ -29,6 +32,22 @@ namespace BugTracker.Services
             };
 
             email.Body = builder.ToMessageBody();
+
+            try
+            {
+                using var smtp = new SmtpClient();
+                smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+
+                await smtp.SendAsync(email);
+
+                smtp.Disconnect(true);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
