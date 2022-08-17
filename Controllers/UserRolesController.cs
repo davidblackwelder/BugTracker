@@ -2,13 +2,16 @@
 using BugTracker.Models;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class UserRolesController : Controller
     {
         private readonly IBTRolesService _rolesService;
@@ -21,6 +24,7 @@ namespace BugTracker.Controllers
             _companyInfoService = companyInfoService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
             // Add an instance of the ViewModel as a list (model)
@@ -48,6 +52,37 @@ namespace BugTracker.Controllers
 
             // Return the model to the View
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
+        {
+            // Get the company Id
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            // Instantiate the BTUser
+            BTUser btUser = (await _companyInfoService.GetAllMembersAsync(companyId)).FirstOrDefault(u => u.Id == member.BTUser.Id);
+
+            // Get Roles fro the User
+            IEnumerable<string> roles = await _rolesService.GetUserRolesAsync(btUser);
+
+            // Grab the selected role
+            string userRole = member.SelectedRoles.FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                //Remove User from their roles
+                if(await _rolesService.RemoveUserFromRolesAsync(btUser, roles))
+                {
+                    // Add User to the new role
+                    await _rolesService.AddUserToRoleAsync(btUser, userRole);
+                }
+
+            }
+
+            // Navigate back to the View
+            return RedirectToAction(nameof(ManageUserRoles));
         }
     }
 }

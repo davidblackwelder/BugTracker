@@ -1,4 +1,6 @@
-﻿<div class="row">
+﻿@model IEnumerable<BugTracker.Models.ViewModels.ManageUserRolesViewModel>
+
+<div class="row">
   <h2 class="m-t-0 h3"><b>Manage Member Roles </b></h2>
   @foreach (var member in Model)
   {
@@ -11,7 +13,21 @@
       	    		Once roles are selected, click "Assign Roles" to submit the form.
       	    	</p>
       	    	<hr />
-      	    	<form asp-action="ManageUserRoles" asp-controller="UserRoles" method=post>    
+      	    	<form asp-action="ManageUserRoles" asp-controller="UserRoles" method=post>
+                    <input type="hidden" asp-for="@member.BTUser.Id">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="@member.Roles" class="form-control">Roles for @member.BTUser.FullName</label>
+                                <select asp-for="@member.SelectedRoles" class="form-control" asp-items="@member.Roles" multiple></select>
+                                <hr>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="submit" value="Assign Role" class="btn btn-info">
+                            </div>
+                        </div>
+                    </div>
       	    	</form>
       	    </div>
       	</div>
