@@ -61,7 +61,7 @@ namespace BugTracker.Data
             //Service: An instance of the UserManager
             var userManagerSvc = svcProvider.GetRequiredService<UserManager<BTUser>>();
             //Migration: This is the programmatic equivalent to Update-Database
-            await dbContextSvc.Database.MigrateAsync();
+            //await dbContextSvc.Database.MigrateAsync();
 
 
             //Custom  Bug Tracker Seed Methods
